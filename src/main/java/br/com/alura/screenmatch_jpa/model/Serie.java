@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.OptionalDouble;
 
 import br.com.alura.screenmatch_jpa.type.Categoria;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,6 +13,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
@@ -39,7 +41,7 @@ public class Serie {
 	
 	private String sinope;
 	
-	@Transient
+	@OneToMany(mappedBy = "serie", cascade = CascadeType.ALL)
 	private List<Episodio> episodios = new ArrayList<>();
 	
 	public List<Episodio> getEpisodios() {
@@ -47,6 +49,7 @@ public class Serie {
 	}
 
 	public void setEpisodios(List<Episodio> episodios) {
+		episodios.forEach(e -> e.setSerie(this));
 		this.episodios = episodios;
 	}
 
