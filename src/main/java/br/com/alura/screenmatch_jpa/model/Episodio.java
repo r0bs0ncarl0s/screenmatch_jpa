@@ -1,4 +1,4 @@
-package br.com.alura.screenmatch.model;
+package br.com.alura.screenmatch_jpa.model;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
