@@ -1,141 +1,126 @@
 package br.com.alura.screenmatch_jpa.model;
 
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalDouble;
 
-import br.com.alura.screenmatch_jpa.type.Categoria;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import br.com.alura.screenmatch_jpa.service.ConsultaChatGPT;
 
 @Entity
-@Table(name= "series")
+@Table(name = "series")
 public class Serie {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;	
-	
-	@Column(name = "nomeDaSerie", unique = true)
-	private String titulo;
-	
-	private Integer totalTemporadas;
-	
-	private Double avaliacao;
-	
-	@Enumerated(EnumType.STRING)
-	private Categoria genero;
-	
-	private String atores;
-	
-	private String poster;
-	
-	private String sinope;
-	
-	@OneToMany(mappedBy = "serie", cascade = CascadeType.ALL)
-	private List<Episodio> episodios = new ArrayList<>();
-	
-	public List<Episodio> getEpisodios() {
-		return episodios;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String titulo;
+    private Integer totalTemporadas;
+    private Double avaliacao;
+    @Enumerated(EnumType.STRING)
+    private Categoria genero;
+    private String atores;
+    private String poster;
+    private String sinopse;
 
-	public void setEpisodios(List<Episodio> episodios) {
-		episodios.forEach(e -> e.setSerie(this));
-		this.episodios = episodios;
-	}
+    @OneToMany(mappedBy = "serie", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Episodio> episodios = new ArrayList<>();
 
-	public String getTitulo() {
-		return titulo;
-	}
+    public Serie() {}
 
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
-	}
+    public Serie(DadosSerie dadosSerie){
+        this.titulo = dadosSerie.titulo();
+        this.totalTemporadas = dadosSerie.totalTemporadas();
+        this.avaliacao = OptionalDouble.of(Double.valueOf(dadosSerie.avaliacao())).orElse(0);
+        this.genero = Categoria.fromString(dadosSerie.genero().split(",")[0].trim());
+        this.atores = dadosSerie.atores();
+        this.poster = dadosSerie.poster();
+        this.sinopse = ConsultaChatGPT.obterTraducao(dadosSerie.sinopse()).trim();
+    }
 
-	public Integer getTotalTemporadas() {
-		return totalTemporadas;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setTotalTemporadas(Integer totalTemporadas) {
-		this.totalTemporadas = totalTemporadas;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Double getAvaliacao() {
-		return avaliacao;
-	}
+    public List<Episodio> getEpisodios() {
+        return episodios;
+    }
 
-	public void setAvaliacao(Double avaliacao) {
-		this.avaliacao = avaliacao;
-	}
+    public void setEpisodios(List<Episodio> episodios) {
+        episodios.forEach(e -> e.setSerie(this));
+        this.episodios = episodios;
+    }
 
-	public Categoria getGenero() {
-		return genero;
-	}
+    public String getTitulo() {
+        return titulo;
+    }
 
-	public void setGenero(Categoria genero) {
-		this.genero = genero;
-	}
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
 
-	public String getAtores() {
-		return atores;
-	}
+    public Integer getTotalTemporadas() {
+        return totalTemporadas;
+    }
 
-	public void setAtores(String atores) {
-		this.atores = atores;
-	}
+    public void setTotalTemporadas(Integer totalTemporadas) {
+        this.totalTemporadas = totalTemporadas;
+    }
 
-	public String getPoster() {
-		return poster;
-	}
+    public Double getAvaliacao() {
+        return avaliacao;
+    }
 
-	public void setPoster(String poster) {
-		this.poster = poster;
-	}
+    public void setAvaliacao(Double avaliacao) {
+        this.avaliacao = avaliacao;
+    }
 
-	public String getSinope() {
-		return sinope;
-	}
+    public Categoria getGenero() {
+        return genero;
+    }
 
-	public void setSinope(String sinope) {
-		this.sinope = sinope;
-	}
+    public void setGenero(Categoria genero) {
+        this.genero = genero;
+    }
 
-	//Construtor padrão para utilizar o JPA
-	public Serie() {
-		
-	}
-	
-	public Serie(DadosSerie dadosSerie) {
-		this.titulo = dadosSerie.titulo();
-		this.totalTemporadas = dadosSerie.totalTemporadas();
-		this.avaliacao = OptionalDouble.of(Double.valueOf(dadosSerie.avaliacao())).orElse(0D);
-		this.atores = dadosSerie.atores();
-		this.poster = dadosSerie.poster();
-		//Usando ChatGPT para traduzir
-		//this.sinope = ConsultaChatGPT.obterTraducao(dadosSerie.sinope()).trim();
-		this.sinope = dadosSerie.sinope(); //Sem tradução
-		this.genero = Categoria.fromString(dadosSerie.genero().split(",")[0].trim());
-	}
+    public String getAtores() {
+        return atores;
+    }
 
-	@Override
-	public String toString() {
-		return  " genero=" + genero +
-				", titulo=" + titulo + 
-				", totalTemporadas=" + totalTemporadas + 
-				", avaliacao=" + avaliacao + 
-				", atores=" + atores + 
-				", poster=" + poster + 
-				", sinope=" + sinope;
-	}
-	
-	
+    public void setAtores(String atores) {
+        this.atores = atores;
+    }
+
+    public String getPoster() {
+        return poster;
+    }
+
+    public void setPoster(String poster) {
+        this.poster = poster;
+    }
+
+    public String getSinopse() {
+        return sinopse;
+    }
+
+    public void setSinopse(String sinopse) {
+        this.sinopse = sinopse;
+    }
+
+    @Override
+    public String toString() {
+        return
+                "genero=" + genero +
+                        ", titulo='" + titulo + '\'' +
+                        ", totalTemporadas=" + totalTemporadas +
+                        ", avaliacao=" + avaliacao +
+                        ", atores='" + atores + '\'' +
+                        ", poster='" + poster + '\'' +
+                        ", sinopse='" + sinopse + '\'' +
+                        ", episodios='" + episodios + '\'';
+    }
 }

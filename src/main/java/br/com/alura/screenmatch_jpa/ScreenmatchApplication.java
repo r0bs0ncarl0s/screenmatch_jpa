@@ -10,7 +10,6 @@ import br.com.alura.screenmatch_jpa.repository.SerieRepository;
 
 @SpringBootApplication
 public class ScreenmatchApplication implements CommandLineRunner {
-
 	@Autowired
 	private SerieRepository repositorio;
 
